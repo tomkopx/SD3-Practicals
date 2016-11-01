@@ -2,23 +2,23 @@ package Coursework;
 
 public class MasterShip extends Ship {
 
-	protected int mode;
+	protected ShipMode mode;
 	
 	public MasterShip(int position){
 		
 		setName("MasterShip");
 		setPosition(position);
 		setPrev_position(position);
-		setMode(0);
+		setMode(new DefensiveMode());
 		
 	}
 
-	public int getMode() {
+	public ShipMode getMode() {
 		return mode;
 	}
 
 
-	public void setMode(int mode) {
+	public void setMode(ShipMode mode) {
 		this.mode = mode;
 	}
 	
