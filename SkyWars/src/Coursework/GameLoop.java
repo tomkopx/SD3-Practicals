@@ -4,6 +4,7 @@ package Coursework;
 public class GameLoop {
 
 	private static GameLoop uniqueInstance;
+	private MasterShip ship;
 	
 	public static synchronized GameLoop getInstance(){
 		if(uniqueInstance == null){
@@ -15,9 +16,12 @@ public class GameLoop {
 	
 	public void InitialiseGame(){
 		
-		MasterShip ship = new MasterShip(2);
+		ship = new MasterShip(2);
 		
 	}
-	
+
+	public MasterShip getShip() {
+		return ship;
+	}
 	
 }

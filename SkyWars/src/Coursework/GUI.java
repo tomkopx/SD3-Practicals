@@ -3,11 +3,18 @@ package Coursework;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+
+import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+
 import javax.swing.JButton;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
+import javax.swing.ImageIcon;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -17,6 +24,7 @@ public class GUI {
 
 	private JFrame frame;
 	private JTable Grid;
+	protected GameLoop gameLoop = GameLoop.getInstance();
 
 	/**
 	 * Launch the application.
@@ -50,9 +58,23 @@ public class GUI {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
+		//Game Grid
+		Grid = new JTable(4,4);
+		Grid.setEnabled(false);
+		Grid.setBounds(29, 70, 1201, 400);
+		Grid.setRowHeight(100);
+		frame.getContentPane().add(Grid);
+
+		
+		ImageIcon test = new ImageIcon("test.png");	
+		Grid.setValueAt(test, 3, 3);
+		
+		//Will start the game loop class, everything happens here
+		gameLoop.InitialiseGame();
+		
 		//Move button
 		final JButton moveButton = new JButton("Move");
-		moveButton.setVisible(false);
+		moveButton.setVisible(true);
 		moveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
@@ -62,47 +84,40 @@ public class GUI {
 		
 		//Undo Button
 		final JButton undoButton = new JButton("Undo");
-		undoButton.setVisible(false);
+		undoButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		undoButton.setVisible(true);
 		undoButton.setBounds(800, 586, 150, 50);
 		frame.getContentPane().add(undoButton);
 		
-		final JButton modeButton = new JButton("Change Mode");
-		modeButton.setVisible(false);
-		modeButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		modeButton.setBounds(330, 586, 150, 50);
-		frame.getContentPane().add(modeButton);
-		
 		//Current Mode text
 		final JTextPane currentMode = new JTextPane();
-		currentMode.setVisible(false);
+		currentMode.setVisible(true);
 		currentMode.setEditable(false);
 		currentMode.setText("Current Mode : Defensive");
 		currentMode.setBounds(10, 616, 187, 20);
 		frame.getContentPane().add(currentMode);
 		
-		//Start Button
-		final JButton startButton = new JButton("START");
-		startButton.addActionListener(new ActionListener() {
+		final JButton modeButton = new JButton("Change Mode");
+		modeButton.setVisible(true);
+		modeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				startButton.setVisible(false);
-				GameLoop game = GameLoop.getInstance();
 				
-				game.InitialiseGame();
+				if(gameLoop.getShip().getMode() instanceof DefensiveMode){
+					currentMode.setText("Current Mode : Offensive");
+					gameLoop.getShip().setMode(new OffensiveMode());
+				}
+				else{
+					currentMode.setText("Current Mode : Defensive");
+					gameLoop.getShip().setMode(new DefensiveMode());
+				}
 				
-				moveButton.setVisible(true);
-				undoButton.setVisible(true);
-				modeButton.setVisible(true);
-				currentMode.setVisible(true);
+				gameLoop.getShip().getMode().shipMode();
 			}
 		});
-		startButton.setBounds(490, 530, 300, 80);
-		frame.getContentPane().add(startButton);
-		
-		Grid = new JTable();
-		Grid.setBounds(277, 272, 239, -167);
-		frame.getContentPane().add(Grid);
+		modeButton.setBounds(330, 586, 150, 50);
+		frame.getContentPane().add(modeButton);
 	}
 }

@@ -14,4 +14,16 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src/Coursework/test.gif</name>
+			<type>1</type>
+			<location>H:/SD3-Practicals/SkyWars/src/Coursework/test.gif</location>
+		</link>
+		<link>
+			<name>src/Coursework/test.png</name>
+			<type>1</type>
+			<location>H:/SD3-Practicals/SkyWars/src/Coursework/test.png</location>
+		</link>
+	</linkedResources>
 </projectDescription>
