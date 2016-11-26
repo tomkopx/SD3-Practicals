@@ -4,8 +4,8 @@ public class BattleShooter extends Ship {
 
 	public BattleShooter(){
 		setName("BattleShooter");
-		setPosition(1);
-		setPrev_position(1);
+		setPosition(0,0);
+
 	}
 	
 }

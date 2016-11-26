@@ -1,5 +1,7 @@
 package Coursework;
 
+import java.awt.Point;
+
 //Main class that will do all the work
 public class GameLoop {
 
@@ -16,7 +18,9 @@ public class GameLoop {
 	
 	public void InitialiseGame(){
 		
-		ship = new MasterShip(2);
+		Point randCoord = new Point(0,0);
+		
+		ship = new MasterShip(randCoord);
 		
 	}
 

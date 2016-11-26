@@ -1,14 +1,15 @@
 package Coursework;
 
+import java.awt.Point;
+
 public class MasterShip extends Ship {
 
 	protected ShipMode mode;
 	
-	public MasterShip(int position){
+	public MasterShip(Point position){
 		
 		setName("MasterShip");
-		setPosition(position);
-		setPrev_position(position);
+		setPosition(position.x, position.y);
 		setMode(new DefensiveMode());
 		
 	}

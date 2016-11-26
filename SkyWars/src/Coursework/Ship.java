@@ -1,10 +1,11 @@
 package Coursework;
 
+import java.awt.Point;
+
 public abstract class Ship {
 
 	protected String name;
-	protected int position;
-	protected int prev_position;
+	protected Point position;
 
 	public String getName() {
 		return name;
@@ -14,21 +15,13 @@ public abstract class Ship {
 		this.name = name;
 	}
 
-	public int getPosition() {
+	public Point getPosition() {
 		return position;
 	}
 
-	public void setPosition(int position) {
-		this.position = position;
+	public void setPosition(int x, int y) {
+		this.position.x = x;
+		this.position.y = y;
 	}
-
-	public int getPrev_position() {
-		return prev_position;
-	}
-
-	public void setPrev_position(int prev_position) {
-		this.prev_position = prev_position;
-	}
-	
 	
 }
