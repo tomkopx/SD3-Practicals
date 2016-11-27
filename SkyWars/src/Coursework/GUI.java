@@ -3,6 +3,7 @@ package Coursework;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
@@ -26,7 +27,8 @@ import javax.swing.JTable;
 public class GUI {
 
 	private JFrame frame;
-	protected GameLoop gameLoop = GameLoop.getInstance();
+	protected GameLoop gameLoop = GameLoop.getInstance(); //Creating unique game loop instance
+	protected int turns = 0; //Used as score
 
 	/**
 	 * Launch the application.
@@ -105,11 +107,11 @@ public class GUI {
 		numEnemies.setBounds(10, 647, 187, 20);
 		frame.getContentPane().add(numEnemies);
 		
-		//Number of enemies destroyed
+		//Number of turns surivived
 		final JTextPane score = new JTextPane();
 		score.setVisible(true);
 		score.setEditable(false);
-		score.setText("Number of enemies destroyed: " + gameLoop.getEnemyShips().size());
+		score.setText("Number of turns survived: " + gameLoop.getEnemyShips().size());
 		score.setBounds(400, 647, 200, 20);
 		frame.getContentPane().add(score);
 		
@@ -118,6 +120,13 @@ public class GUI {
 		moveButton.setVisible(true);
 		moveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
+				//If flag has been changed, don't let user move since they lost
+				if(gameLoop.isGameOver() == true){
+					JOptionPane.showMessageDialog(null, "You lost, click Undo button if you wanna retry your last move.");
+					return;
+				}
+				
 				//Random number for spawn chance
 				int randNum = gameLoop.RandInt(1,3);
 				//Move player ship first
@@ -136,19 +145,29 @@ public class GUI {
 				//check if the new square has a loss condition
 				gameLoop.CheckForLoss(Grid);
 				
+				turns++;
 				//Updating numbers
 				numEnemies.setText("Number of enemies: " + gameLoop.getEnemyShips().size());
-				score.setText("Number of enemies destroyed: " + gameLoop.getUndoShips().size());
+				score.setText("Number of turns survived: " + turns);
 			}
 		});
 		moveButton.setBounds(571, 586, 150, 50);
 		frame.getContentPane().add(moveButton);
 		
 		//Undo Button
-		final JButton undoButton = new JButton("Undo");
+		final JButton undoButton = new JButton("Undo Last Move");
 		undoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				gameLoop.UndoMove();
+				if(gameLoop.isUndo() == true){
+					JOptionPane.showMessageDialog(null, "Undo unavailable!");
+					return;
+				}
+				//Call in the undo move function from game loop
+				gameLoop.UndoMove(Grid);
+				turns--;
+				//Update numbers
+				numEnemies.setText("Number of enemies: " + gameLoop.getEnemyShips().size());
+				score.setText("Number of turns survived: " + turns);
 			}
 		});
 		undoButton.setVisible(true);
@@ -169,10 +188,12 @@ public class GUI {
 		modeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				//If current mode is defensive mode, change to offensive
 				if(gameLoop.getShip().getMode() instanceof DefensiveMode){
 					currentMode.setText("Current Mode : Offensive");
 					gameLoop.getShip().setMode(new OffensiveMode());
 				}
+				//Otherwise, change offensive mode to defensive
 				else{
 					currentMode.setText("Current Mode : Defensive");
 					gameLoop.getShip().setMode(new DefensiveMode());

@@ -13,6 +13,7 @@ public class MasterShip extends Ship {
 		setName("MasterShip");
 		setImage(new ImageIcon("src\\Coursework\\MasterShip.png"));
 		setPosition(position);
+		setPrev_position(null);
 		setMode(new DefensiveMode());
 		
 	}

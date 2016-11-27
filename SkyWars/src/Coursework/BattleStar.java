@@ -10,6 +10,7 @@ public class BattleStar extends Ship {
 		setName("BattleStar");
 		setImage(new ImageIcon("src\\Coursework\\BattleStar.png"));
 		setPosition(new Point(0,0));
+		setPrev_position(null);
 	}
 	
 }

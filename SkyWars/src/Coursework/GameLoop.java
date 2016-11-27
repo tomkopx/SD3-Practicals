@@ -11,10 +11,12 @@ import javax.swing.JTable;
 //Main class that will do all the work
 public class GameLoop {
 
-	private static GameLoop uniqueInstance;
+	private static GameLoop uniqueInstance; 
 	private MasterShip ship;
-	private ArrayList<Ship> enemyShips = new ArrayList<Ship>();
+	private ArrayList<Ship> enemyShips = new ArrayList<Ship>(); //This array list stores enemy ships currently in the grid
 	private ArrayList<Ship> undoShips = new ArrayList<Ship>(); //This array list is used to bring back removed ships when undo button is used
+	private boolean gameOver = false; //Used for button availability
+	private boolean undo = true;
 	
 	public static synchronized GameLoop getInstance(){
 		if(uniqueInstance == null){
@@ -96,8 +98,13 @@ public class GameLoop {
 	
 	//Function to move all ships
 	public void MoveShip(Ship ship, JTable grid){
+		
 		int x = ship.position.x;
 		int y = ship.position.y;
+		undo = false;
+		//Used for undo
+		ship.setPrev_position(new Point(x,y));
+		
 		//ArrayList of possible moves the skip can make
 		ArrayList<Point> possible = FindPossibleMoves(x, y);
 		//Find random index value to pick a move from possible moves
@@ -126,7 +133,10 @@ public class GameLoop {
 		
 	}
 	
+	//This function is called at end of everyones movement to see whether or not the player ship survived
 	public void CheckForLoss(JTable grid){
+		
+		undoShips.clear();
 		
 		int shipLimit = 2;
 		int shipNum = 0;
@@ -138,7 +148,7 @@ public class GameLoop {
 		else if (ship.mode instanceof OffensiveMode){
 			shipLimit = 3;
 		}
-		
+		//Checking how many ships were in conflict with player, then adding them to backup list
 		for(Ship s : enemyShips){
 			if(s.position.getX() == ship.position.getX() && s.position.getY() == ship.position.getY()){
 				shipNum++;
@@ -148,13 +158,8 @@ public class GameLoop {
 		//If the number of ships is bigger or equal than the limit allowed, the player loses and application shuts down.
 		if(shipNum >= shipLimit){
 			JOptionPane.showMessageDialog(null, "You got rekt kid!");
-			try {
-				Thread.sleep(500);
-			} catch(InterruptedException e) {
-				e.printStackTrace();
-			}
 			
-			System.exit(0);
+			gameOver = true;
 		}
 		//If number of ships is lower than the limit, the enemy ships are removed from the game
 		else{
@@ -168,9 +173,42 @@ public class GameLoop {
 		}
 	}
 
-	
-	public void UndoMove(){
+	//Undo move function
+	public void UndoMove(JTable grid){
 		
+		gameOver = false;
+		
+		//This is to add any ships that were destroyed in previous turn to the current enemy ship list
+		if(!undoShips.isEmpty()){
+			for(Ship s : undoShips){
+				enemyShips.add(s);
+			}
+			
+			undoShips.clear();
+		}	
+		
+		//Display and change current position of player ship to previous position
+		grid.setValueAt(new ImageIcon("Blank.png"), ship.position.y, ship.position.x);
+		ship.setPosition(ship.getPrev_position());
+		grid.setValueAt(ship.image, ship.position.y, ship.position.x);
+		
+		undo = true;
+		
+		for(Ship s : enemyShips){
+			
+			//This is just in case an enemy ship just spawned, it will be removed from enemy ship list and spot 0,0 will be cleared
+			if(s.getPrev_position() == null){
+				grid.setValueAt(new ImageIcon("Blank.png"), s.position.y, s.position.x);
+				enemyShips.remove(s);
+				return;
+			}
+			
+			//Display and change current position of enemy ship to previous position
+			grid.setValueAt(new ImageIcon("Blank.png"), s.position.y, s.position.x);
+			s.setPosition(s.getPrev_position());
+			grid.setValueAt(s.image, s.position.y, s.position.x);
+			
+		}
 	}
 	
 	public MasterShip getShip() {
@@ -183,6 +221,14 @@ public class GameLoop {
 
 	public ArrayList<Ship> getUndoShips() {
 		return undoShips;
+	}
+
+	public boolean isGameOver() {
+		return gameOver;
+	}
+
+	public boolean isUndo() {
+		return undo;
 	}
 
 	

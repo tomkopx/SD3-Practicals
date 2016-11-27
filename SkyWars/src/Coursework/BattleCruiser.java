@@ -10,6 +10,7 @@ public class BattleCruiser extends Ship {
 		setName("BattleCruiser");
 		setImage(new ImageIcon("src\\Coursework\\BattleCruiser.png"));
 		setPosition(new Point(0,0));
+		setPrev_position(null);
 	}
 	
 }

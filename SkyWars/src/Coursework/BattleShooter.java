@@ -10,7 +10,7 @@ public class BattleShooter extends Ship {
 		setName("BattleShooter");
 		setImage(new ImageIcon("src\\Coursework\\BattleShooter.png"));
 		setPosition(new Point(0,0));
-
+		setPrev_position(null);
 	}
 	
 }
