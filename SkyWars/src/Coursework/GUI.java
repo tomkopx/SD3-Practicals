@@ -16,14 +16,16 @@ import java.awt.event.ActionEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JTable;
 
+
 public class GUI {
 
 	private JFrame frame;
-	private JTable Grid;
 	protected GameLoop gameLoop = GameLoop.getInstance();
 
 	/**
@@ -48,6 +50,33 @@ public class GUI {
 	public GUI() {
 		initialize();
 	}
+	
+	//This creates a jtable that can render images in all cells
+	public JTable createGrid(){
+        ImageIcon blank = new ImageIcon("Blank.png"); //Blank image used for empty cells
+
+        Object[] columnNames = {blank, blank, blank, blank};
+        Object[][] data =
+        {
+            {blank, blank, blank, blank},
+            {blank, blank, blank, blank},
+            {blank, blank, blank, blank},
+            {blank, blank, blank, blank}
+        };
+
+        DefaultTableModel model = new DefaultTableModel(data, columnNames);
+        JTable Grid = new JTable(model)
+        {
+            //  Returning the Class of each column will allow different
+            //  renderers to be used based on Class
+            public Class getColumnClass(int column)
+            {
+                return getValueAt(0, column).getClass();
+            }
+        };
+        
+        return Grid;
+	}
 
 	/**
 	 * Initialize the contents of the frame.
@@ -59,24 +88,57 @@ public class GUI {
 		frame.getContentPane().setLayout(null);
 		
 		//Game Grid
-		Grid = new JTable(4,4);
+		final JTable Grid = createGrid();
 		Grid.setEnabled(false);
-		Grid.setBounds(29, 70, 1201, 400);
-		Grid.setRowHeight(100);
+		Grid.setBounds(29, 70, 1201, 480);
+		Grid.setRowHeight(120);
 		frame.getContentPane().add(Grid);
-
-		
-		ImageIcon test = new ImageIcon("test.png");	
-		Grid.setValueAt(test, 3, 3);
 		
 		//Will start the game loop class, everything happens here
-		gameLoop.InitialiseGame();
+		gameLoop.InitialiseGame(Grid);
+		
+		//Number of enemies text
+		final JTextPane numEnemies = new JTextPane();
+		numEnemies.setVisible(true);
+		numEnemies.setEditable(false);
+		numEnemies.setText("Number of enemies: " + gameLoop.getEnemyShips().size());
+		numEnemies.setBounds(10, 647, 187, 20);
+		frame.getContentPane().add(numEnemies);
+		
+		//Number of enemies destroyed
+		final JTextPane score = new JTextPane();
+		score.setVisible(true);
+		score.setEditable(false);
+		score.setText("Number of enemies destroyed: " + gameLoop.getEnemyShips().size());
+		score.setBounds(400, 647, 200, 20);
+		frame.getContentPane().add(score);
 		
 		//Move button
 		final JButton moveButton = new JButton("Move");
 		moveButton.setVisible(true);
 		moveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				//Random number for spawn chance
+				int randNum = gameLoop.RandInt(1,3);
+				//Move player ship first
+				gameLoop.MoveShip(gameLoop.getShip(), Grid);
+				
+				//Then move all the enemy ships
+				for(Ship s : gameLoop.getEnemyShips()){
+					gameLoop.MoveShip(s, Grid);
+				}
+				
+				
+				//1 in 3 chance to spawn enemy
+				if(randNum == 3){
+					gameLoop.SpawnEnemy(Grid);
+				}
+				//check if the new square has a loss condition
+				gameLoop.CheckForLoss(Grid);
+				
+				//Updating numbers
+				numEnemies.setText("Number of enemies: " + gameLoop.getEnemyShips().size());
+				score.setText("Number of enemies destroyed: " + gameLoop.getUndoShips().size());
 			}
 		});
 		moveButton.setBounds(571, 586, 150, 50);
@@ -86,6 +148,7 @@ public class GUI {
 		final JButton undoButton = new JButton("Undo");
 		undoButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				gameLoop.UndoMove();
 			}
 		});
 		undoButton.setVisible(true);
@@ -100,6 +163,7 @@ public class GUI {
 		currentMode.setBounds(10, 616, 187, 20);
 		frame.getContentPane().add(currentMode);
 		
+		//This button changes operational mode of the player ship
 		final JButton modeButton = new JButton("Change Mode");
 		modeButton.setVisible(true);
 		modeButton.addActionListener(new ActionListener() {

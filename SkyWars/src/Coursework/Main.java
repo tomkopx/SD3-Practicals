@@ -1,12 +1,13 @@
 package Coursework;
 
+import java.awt.Point;
 
 //TEST CLASS REMOVE LATER
 public class Main {
 
 	public static void main(String[] args) {
 		
-		MasterShip ship = new MasterShip(1);
+		MasterShip ship = new MasterShip(new Point(0,0));
 		
 		ship.getMode().shipMode();
 		

@@ -2,6 +2,8 @@ package Coursework;
 
 import java.awt.Point;
 
+import javax.swing.ImageIcon;
+
 public class MasterShip extends Ship {
 
 	protected ShipMode mode;
@@ -9,7 +11,8 @@ public class MasterShip extends Ship {
 	public MasterShip(Point position){
 		
 		setName("MasterShip");
-		setPosition(position.x, position.y);
+		setImage(new ImageIcon("src\\Coursework\\MasterShip.png"));
+		setPosition(position);
 		setMode(new DefensiveMode());
 		
 	}
