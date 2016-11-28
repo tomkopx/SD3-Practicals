@@ -12,7 +12,7 @@ import javax.swing.JTable;
 public class GameLoop implements Observable {
 
 	private static GameLoop uniqueInstance; 
-	private GridUpdater updater;
+	private ArrayList<GridUpdater> updater; //Observer item
 	private MasterShip ship;
 	private ArrayList<Ship> enemyShips = new ArrayList<Ship>(); //This array list stores enemy ships currently in the grid
 	private ArrayList<Ship> undoShips = new ArrayList<Ship>(); //This array list is used to bring back removed ships when undo button is used
@@ -218,10 +218,18 @@ public class GameLoop implements Observable {
 		}
 	}
 	
+	//Notify the observers
 	public void notifyObservers(Ship ship, JTable grid) {
-		GridUpdater updater = new GridUpdater();
-		updater.updateGrid(ship, grid);
+		addObservers(new GridUpdater());
 		
+		for(GridUpdater u : updater){
+			u.updateGrid(ship, grid);
+		}	
+	}
+	
+	//Add any new observers
+	public void addObservers(GridUpdater observer){
+		updater.add(observer);
 	}
 	
 	public MasterShip getShip() {
@@ -244,13 +252,17 @@ public class GameLoop implements Observable {
 		return undo;
 	}
 
-	public GridUpdater getUpdater() {
+	public ArrayList<GridUpdater> getUpdater() {
 		return updater;
 	}
 
-	public void setUpdater(GridUpdater updater) {
+	public void setUpdater(ArrayList<GridUpdater> updater) {
 		this.updater = updater;
 	}
+
+	
+
+
 	
 	
 
