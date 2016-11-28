@@ -5,7 +5,7 @@ import java.awt.Point;
 import javax.swing.ImageIcon;
 
 //Abstract class for all the ships used
-public abstract class Ship {
+public abstract class Ship implements java.io.Serializable {
 
 	protected String name;
 	protected Point position;

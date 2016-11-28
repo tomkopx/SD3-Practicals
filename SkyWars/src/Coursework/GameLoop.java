@@ -1,15 +1,21 @@
 package Coursework;
 
 import java.awt.Point;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 //Main class that will do all the work
-public class GameLoop implements Observable {
+public class GameLoop implements Observable, java.io.Serializable {
 
 	private static GameLoop uniqueInstance; 
 	private ArrayList<GridUpdater> updater = new ArrayList<GridUpdater>(); //Observer item
@@ -19,7 +25,7 @@ public class GameLoop implements Observable {
 	private ArrayList<Ship> undoShips = new ArrayList<Ship>(); //This array list is used to bring back removed ships when undo button is used
 	private boolean gameOver = false; //Used for button availability
 	private boolean undo = true;
-	protected Thread t;
+	private int turns = 0;
 	
 	public static synchronized GameLoop getInstance(){
 		if(uniqueInstance == null){
@@ -98,7 +104,7 @@ public class GameLoop implements Observable {
 		grid.setValueAt(ship.image, ship.position.y, ship.position.x);
 		
 	}
-	
+
 	//Function to move all ships
 	public void MoveShip(Ship ship, JTable grid){
 		
@@ -114,7 +120,7 @@ public class GameLoop implements Observable {
 		int randomPos = RandInt(0, possible.size()-1);
 		
 		//Remove the ship image from its previous location
-		grid.setValueAt(new ImageIcon("Blank.png"), ship.position.y, ship.position.x);
+		grid.setValueAt(new ImageIcon("src\\Coursework\\Blank.png"), ship.position.y, ship.position.x);
 		
 		ship.setPosition(possible.get(randomPos));
 		
@@ -192,7 +198,7 @@ public class GameLoop implements Observable {
 		}	
 		
 		//Display and change current position of player ship to previous position
-		grid.setValueAt(new ImageIcon("Blank.png"), ship.position.y, ship.position.x);
+		grid.setValueAt(new ImageIcon("src\\Coursework\\Blank.png"), ship.position.y, ship.position.x);
 		ship.setPosition(ship.getPrev_position());
 		//Notify grid updater
 		notifyObservers(ship, grid);
@@ -203,18 +209,73 @@ public class GameLoop implements Observable {
 			
 			//This is just in case an enemy ship just spawned, it will be removed from enemy ship list and spot 0,0 will be cleared
 			if(s.getPrev_position() == null){
-				grid.setValueAt(new ImageIcon("Blank.png"), s.position.y, s.position.x);
+				grid.setValueAt(new ImageIcon("src\\Coursework\\Blank.png"), s.position.y, s.position.x);
 				enemyShips.remove(s);
 				return;
 			}
 			
 			//Display and change current position of enemy ship to previous position
-			grid.setValueAt(new ImageIcon("Blank.png"), s.position.y, s.position.x);
+			grid.setValueAt(new ImageIcon("src\\Coursework\\Blank.png"), s.position.y, s.position.x);
 			s.setPosition(s.getPrev_position());
 			//Notify grid updater
 			notifyObservers(s, grid);
 			
 		}
+	}
+	
+
+	//Save function
+	public void Save(JTable grid){
+	      try {
+	          FileOutputStream fileOut =
+	          new FileOutputStream("skywars.ser");
+	          ObjectOutputStream out = new ObjectOutputStream(fileOut);
+	          
+	          out.writeObject(updater);
+	          out.writeObject(ship);
+	          out.writeObject(factory);
+	          out.writeObject(enemyShips);
+	          out.writeObject(undoShips);
+	          out.writeBoolean(gameOver);
+	          out.writeBoolean(undo);
+	          out.writeInt(turns);
+	          
+	          out.writeObject(grid.getModel());
+	          
+	          out.close();
+	          fileOut.close();
+	          System.out.printf("Serialized data is saved in skywars.ser");
+	       }catch(IOException i) {
+	          i.printStackTrace();
+	       }
+	}
+	
+	//Load function
+	public void Load(JTable grid) throws ClassNotFoundException{
+	      try {
+	          FileInputStream fileIn = new FileInputStream("skywars.ser");
+	          ObjectInputStream in = new ObjectInputStream(fileIn);
+	          
+	          ArrayList<GridUpdater> recoveredUpdater = (ArrayList<GridUpdater>) in.readObject();
+	          updater = recoveredUpdater;
+	          ship = (MasterShip) in.readObject();
+	          factory = (EnemyFactory) in.readObject();
+	          ArrayList<Ship> recoveredEnemyShips =  (ArrayList<Ship>) in.readObject();
+	          enemyShips = recoveredEnemyShips;
+	          ArrayList<Ship> recoveredUndoShips =  (ArrayList<Ship>) in.readObject();
+	          undoShips = recoveredUndoShips;
+	          gameOver =  in.readBoolean();
+	          undo =  in.readBoolean();
+	          turns = in.readInt();
+	          DefaultTableModel model = (DefaultTableModel) in.readObject();
+	          grid.setModel(model);
+	          
+	          in.close();
+	          fileIn.close();
+	       }catch(IOException i) {
+	          i.printStackTrace();
+	          return;
+	       }
 	}
 	
 	//Notify the observers
@@ -229,6 +290,14 @@ public class GameLoop implements Observable {
 	//Add any new observers
 	public void addObservers(GridUpdater observer){
 		updater.add(observer);
+	}
+	
+	public void incTurns(){
+		this.turns++;
+	}
+	
+	public void decTurns(){
+		this.turns--;
 	}
 	
 	public MasterShip getShip() {
@@ -271,10 +340,7 @@ public class GameLoop implements Observable {
 		this.updater = updater;
 	}
 
-	
-
-
-	
-	
-
+	public int getTurns() {
+		return turns;
+	}
 }

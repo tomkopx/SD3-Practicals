@@ -15,13 +15,13 @@ import javax.swing.JTextPane;
 import javax.swing.JTable;
 
 
-public class GUI {
+public class GUI implements java.io.Serializable {
 
 	private JFrame frame;
 	protected GameLoop gameLoop = GameLoop.getInstance();
 	protected MoveController controller = new MoveController();//Creating unique game loop instance
-	protected int turns = 0; //Used as score
 
+	
 	/**
 	 * Launch the application.
 	 */
@@ -47,7 +47,7 @@ public class GUI {
 	
 	//This creates a jtable that can render images in all cells
 	public JTable createGrid(){
-        ImageIcon blank = new ImageIcon("Blank.png"); //Blank image used for empty cells
+        ImageIcon blank = new ImageIcon("src\\Coursework\\Blank.png"); //Blank image used for empty cells
 
         Object[] columnNames = {blank, blank, blank, blank};
         Object[][] data =
@@ -147,13 +147,13 @@ public class GUI {
 				//check if the new square has a loss condition
 				gameLoop.CheckForLoss(Grid);
 				
-				turns++;
+				gameLoop.incTurns();
 				//Updating numbers
 				numEnemies.setText("Number of enemies: " + gameLoop.getEnemyShips().size());
-				score.setText("Number of turns survived: " + turns);
+				score.setText("Number of turns survived: " + gameLoop.getTurns());
 			}
 		});
-		moveButton.setBounds(571, 586, 150, 50);
+		moveButton.setBounds(489, 586, 150, 50);
 		frame.getContentPane().add(moveButton);
 		
 		//Undo Button
@@ -167,16 +167,16 @@ public class GUI {
 				//Call in the undo move function from game loop
 				controller.addMove(new UndoMove(Grid));
 				//gameLoop.UndoMove(Grid);
-				turns--;
+				gameLoop.decTurns();
 				
 				controller.executeMoves();
 				//Update numbers
 				numEnemies.setText("Number of enemies: " + gameLoop.getEnemyShips().size());
-				score.setText("Number of turns survived: " + turns);
+				score.setText("Number of turns survived: " + gameLoop.getTurns());
 			}
 		});
 		undoButton.setVisible(true);
-		undoButton.setBounds(800, 586, 150, 50);
+		undoButton.setBounds(694, 586, 150, 50);
 		frame.getContentPane().add(undoButton);
 		
 		//Current Mode text
@@ -207,7 +207,44 @@ public class GUI {
 				gameLoop.getShip().getMode().shipMode();
 			}
 		});
-		modeButton.setBounds(330, 586, 150, 50);
+		modeButton.setBounds(279, 586, 150, 50);
 		frame.getContentPane().add(modeButton);
+		
+		//Serialization button
+		JButton Save = new JButton("Save");
+		Save.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				gameLoop.Save(Grid);
+			}
+		});
+		Save.setBounds(957, 594, 122, 35);
+		frame.getContentPane().add(Save);
+		
+		//Deserialization button
+		JButton Load = new JButton("Load");
+		Load.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				try {
+					gameLoop.Load(Grid);
+				} catch (ClassNotFoundException c) {
+					c.printStackTrace();
+				}
+				
+				numEnemies.setText("Number of enemies: " + gameLoop.getEnemyShips().size());
+				score.setText("Number of turns survived: " + gameLoop.getTurns());
+				
+				//This is just to change the currentMode text field
+				if(gameLoop.getShip().getMode() instanceof DefensiveMode){
+					currentMode.setText("Current Mode : Defensive");
+				}
+				else{
+					currentMode.setText("Current Mode : Offensive");
+				}
+			}
+		});
+		Load.setBounds(1107, 594, 119, 35);
+		frame.getContentPane().add(Load);
 	}
 }

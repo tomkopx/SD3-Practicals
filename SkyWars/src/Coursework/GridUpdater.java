@@ -3,7 +3,7 @@ package Coursework;
 import javax.swing.JTable;
 
 //This class waits for the gameLoop class to notify it so it can update the grid
-public class GridUpdater implements Observer {
+public class GridUpdater implements Observer, java.io.Serializable {
 
 	public void updateGrid(Ship ship, JTable grid) {
 		

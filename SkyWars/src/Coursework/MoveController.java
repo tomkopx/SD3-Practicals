@@ -3,7 +3,7 @@ package Coursework;
 import java.util.ArrayList;
 
 //This class acts as a move controller for the command pattern
-public class MoveController {
+public class MoveController implements java.io.Serializable {
 
 	protected ArrayList<Move> moveList = new ArrayList<Move>();
 	

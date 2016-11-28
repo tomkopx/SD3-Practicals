@@ -5,7 +5,7 @@ import java.awt.Point;
 import javax.swing.ImageIcon;
 
 //One of the enemy ship classes
-public class BattleCruiser extends Ship {
+public class BattleCruiser extends Ship implements java.io.Serializable {
 
 	public BattleCruiser(){
 		setName("BattleCruiser");

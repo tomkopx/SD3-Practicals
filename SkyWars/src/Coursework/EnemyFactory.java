@@ -4,7 +4,7 @@ import java.awt.Point;
 
 
 //This class is used to decide which enemy ship to spawn, factory pattern
-public class EnemyFactory {
+public class EnemyFactory implements java.io.Serializable {
 
 	public Ship spawnShip(int n, Point startCoord){
 		

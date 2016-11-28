@@ -5,7 +5,7 @@ import java.awt.Point;
 import javax.swing.ImageIcon;
 
 //Player ship class
-public class MasterShip extends Ship {
+public class MasterShip extends Ship implements java.io.Serializable {
 
 	protected ShipMode mode;
 	
