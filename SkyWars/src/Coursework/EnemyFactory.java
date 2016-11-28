@@ -3,6 +3,7 @@ package Coursework;
 import java.awt.Point;
 
 
+//This class is used to decide which enemy ship to spawn, factory pattern
 public class EnemyFactory {
 
 	public Ship spawnShip(int n, Point startCoord){

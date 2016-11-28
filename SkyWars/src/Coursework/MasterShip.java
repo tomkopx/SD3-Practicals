@@ -4,6 +4,7 @@ import java.awt.Point;
 
 import javax.swing.ImageIcon;
 
+//Player ship class
 public class MasterShip extends Ship {
 
 	protected ShipMode mode;

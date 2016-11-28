@@ -4,6 +4,7 @@ import java.awt.Point;
 
 import javax.swing.ImageIcon;
 
+//One of the enemy ship classes
 public class BattleStar extends Ship {
 
 	public BattleStar(){

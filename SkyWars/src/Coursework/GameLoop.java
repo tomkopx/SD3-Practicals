@@ -12,8 +12,9 @@ import javax.swing.JTable;
 public class GameLoop implements Observable {
 
 	private static GameLoop uniqueInstance; 
-	private ArrayList<GridUpdater> updater; //Observer item
+	private ArrayList<GridUpdater> updater = new ArrayList<GridUpdater>(); //Observer item
 	private MasterShip ship;
+	private EnemyFactory factory = new EnemyFactory();
 	private ArrayList<Ship> enemyShips = new ArrayList<Ship>(); //This array list stores enemy ships currently in the grid
 	private ArrayList<Ship> undoShips = new ArrayList<Ship>(); //This array list is used to bring back removed ships when undo button is used
 	private boolean gameOver = false; //Used for button availability
@@ -81,10 +82,7 @@ public class GameLoop implements Observable {
 	
 	//This will initialise all the things the game requires
 	public void InitialiseGame(JTable grid){
-		
-		EnemyFactory factory = new EnemyFactory();
-		
-		
+			
 		//This will spawn the player ship at a random location
 		Point randCoord = new Point(RandInt(0,3), RandInt(0,3));
 		
@@ -127,7 +125,6 @@ public class GameLoop implements Observable {
 	
 	//Function to spawn enemy ships
 	public void SpawnEnemy(JTable grid){
-		EnemyFactory factory = new EnemyFactory();
 		int randNum = RandInt(0,2);
 		
 		Ship ship = factory.spawnShip(randNum, new Point(0,0));
@@ -236,6 +233,10 @@ public class GameLoop implements Observable {
 		return ship;
 	}
 
+	public EnemyFactory getFactory() {
+		return factory;
+	}
+
 	public ArrayList<Ship> getEnemyShips() {
 		return enemyShips;
 	}
@@ -243,9 +244,17 @@ public class GameLoop implements Observable {
 	public ArrayList<Ship> getUndoShips() {
 		return undoShips;
 	}
+	
+	public void setGameOver(boolean gameOver) {
+		this.gameOver = gameOver;
+	}
 
 	public boolean isGameOver() {
 		return gameOver;
+	}
+	
+	public void setUndo(boolean undo) {
+		this.undo = undo;
 	}
 
 	public boolean isUndo() {

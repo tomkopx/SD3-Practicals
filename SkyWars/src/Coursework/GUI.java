@@ -1,6 +1,7 @@
 package Coursework;
 
 import java.awt.EventQueue;
+import java.awt.Point;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -18,7 +19,8 @@ import javax.swing.JTable;
 public class GUI {
 
 	private JFrame frame;
-	protected GameLoop gameLoop = GameLoop.getInstance(); //Creating unique game loop instance
+	protected GameLoop gameLoop = GameLoop.getInstance();
+	protected MoveController controller = new MoveController();//Creating unique game loop instance
 	protected int turns = 0; //Used as score
 
 	/**
@@ -127,13 +129,16 @@ public class GUI {
 				//Random number for spawn chance
 				int randNum = gameLoop.RandInt(1,3);
 				//Move player ship first
-				gameLoop.MoveShip(gameLoop.getShip(), Grid);
+				controller.addMove(new ForwardMove(gameLoop.getShip(), Grid));
+				//gameLoop.MoveShip(gameLoop.getShip(), Grid);
 				
 				//Then move all the enemy ships
 				for(Ship s : gameLoop.getEnemyShips()){
-					gameLoop.MoveShip(s, Grid);
+					controller.addMove(new ForwardMove(s, Grid));
+					//gameLoop.MoveShip(s, Grid);
 				}
 				
+				controller.executeMoves();
 				
 				//1 in 3 chance to spawn enemy
 				if(randNum == 3){
@@ -160,8 +165,11 @@ public class GUI {
 					return;
 				}
 				//Call in the undo move function from game loop
-				gameLoop.UndoMove(Grid);
+				controller.addMove(new UndoMove(Grid));
+				//gameLoop.UndoMove(Grid);
 				turns--;
+				
+				controller.executeMoves();
 				//Update numbers
 				numEnemies.setText("Number of enemies: " + gameLoop.getEnemyShips().size());
 				score.setText("Number of turns survived: " + turns);
