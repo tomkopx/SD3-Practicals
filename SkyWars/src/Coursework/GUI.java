@@ -1,7 +1,6 @@
 package Coursework;
 
 import java.awt.EventQueue;
-import java.awt.Point;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -106,7 +105,7 @@ public class GUI {
 		numEnemies.setBounds(10, 647, 187, 20);
 		frame.getContentPane().add(numEnemies);
 		
-		//Number of turns surivived
+		//Number of turns survived
 		final JTextPane score = new JTextPane();
 		score.setVisible(true);
 		score.setEditable(false);
@@ -125,6 +124,7 @@ public class GUI {
 					JOptionPane.showMessageDialog(null, "You lost, click Undo button if you wanna retry your last move.");
 					return;
 				}
+
 				
 				//Random number for spawn chance
 				int randNum = gameLoop.RandInt(1,3);

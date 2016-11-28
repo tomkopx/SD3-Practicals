@@ -19,6 +19,7 @@ public class GameLoop implements Observable {
 	private ArrayList<Ship> undoShips = new ArrayList<Ship>(); //This array list is used to bring back removed ships when undo button is used
 	private boolean gameOver = false; //Used for button availability
 	private boolean undo = true;
+	protected Thread t;
 	
 	public static synchronized GameLoop getInstance(){
 		if(uniqueInstance == null){
@@ -119,6 +120,7 @@ public class GameLoop implements Observable {
 		
 		//Notify grid updater that a move has been made by a ship
 		notifyObservers(ship, grid);
+		
 		
 		
 	}

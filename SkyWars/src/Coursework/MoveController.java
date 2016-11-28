@@ -15,6 +15,11 @@ public class MoveController {
 		
 		for(Move move : moveList){
 			move.execute();
+			try {
+				Thread.sleep(50);
+			} catch(InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		moveList.clear();
