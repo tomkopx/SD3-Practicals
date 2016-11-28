@@ -9,9 +9,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 //Main class that will do all the work
-public class GameLoop {
+public class GameLoop implements Observable {
 
 	private static GameLoop uniqueInstance; 
+	private GridUpdater updater;
 	private MasterShip ship;
 	private ArrayList<Ship> enemyShips = new ArrayList<Ship>(); //This array list stores enemy ships currently in the grid
 	private ArrayList<Ship> undoShips = new ArrayList<Ship>(); //This array list is used to bring back removed ships when undo button is used
@@ -81,6 +82,9 @@ public class GameLoop {
 	//This will initialise all the things the game requires
 	public void InitialiseGame(JTable grid){
 		
+		EnemyFactory factory = new EnemyFactory();
+		
+		
 		//This will spawn the player ship at a random location
 		Point randCoord = new Point(RandInt(0,3), RandInt(0,3));
 		
@@ -88,8 +92,8 @@ public class GameLoop {
 		if(randCoord.getX() == 0 && randCoord.getY() == 0){
 			randCoord.x++;
 		}
-		
-		ship = new MasterShip(randCoord);
+		//Using factory pattern to spawn player ship
+		ship = (MasterShip)factory.spawnShip(3, randCoord);
 		
 		//render player ship on start location
 		grid.setValueAt(ship.image, ship.position.y, ship.position.x);
@@ -115,8 +119,9 @@ public class GameLoop {
 		
 		ship.setPosition(possible.get(randomPos));
 		
-		//Render player ship on new position
-		grid.setValueAt(ship.image, ship.position.y, ship.position.x);
+		//Notify grid updater that a move has been made by a ship
+		notifyObservers(ship, grid);
+		
 		
 	}
 	
@@ -125,7 +130,7 @@ public class GameLoop {
 		EnemyFactory factory = new EnemyFactory();
 		int randNum = RandInt(0,2);
 		
-		Ship ship = factory.spawnShip(randNum);
+		Ship ship = factory.spawnShip(randNum, new Point(0,0));
 		
 		grid.setValueAt(ship.image, ship.position.y, ship.position.x);
 		
@@ -190,7 +195,8 @@ public class GameLoop {
 		//Display and change current position of player ship to previous position
 		grid.setValueAt(new ImageIcon("Blank.png"), ship.position.y, ship.position.x);
 		ship.setPosition(ship.getPrev_position());
-		grid.setValueAt(ship.image, ship.position.y, ship.position.x);
+		//Notify grid updater
+		notifyObservers(ship, grid);
 		
 		undo = true;
 		
@@ -206,9 +212,16 @@ public class GameLoop {
 			//Display and change current position of enemy ship to previous position
 			grid.setValueAt(new ImageIcon("Blank.png"), s.position.y, s.position.x);
 			s.setPosition(s.getPrev_position());
-			grid.setValueAt(s.image, s.position.y, s.position.x);
+			//Notify grid updater
+			notifyObservers(s, grid);
 			
 		}
+	}
+	
+	public void notifyObservers(Ship ship, JTable grid) {
+		GridUpdater updater = new GridUpdater();
+		updater.updateGrid(ship, grid);
+		
 	}
 	
 	public MasterShip getShip() {
@@ -231,5 +244,14 @@ public class GameLoop {
 		return undo;
 	}
 
+	public GridUpdater getUpdater() {
+		return updater;
+	}
+
+	public void setUpdater(GridUpdater updater) {
+		this.updater = updater;
+	}
 	
+	
+
 }

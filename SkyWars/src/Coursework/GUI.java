@@ -4,22 +4,13 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-
-import java.awt.BorderLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-
 import javax.swing.JButton;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 import javax.swing.ImageIcon;
-import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JTable;
 
@@ -69,9 +60,14 @@ public class GUI {
         DefaultTableModel model = new DefaultTableModel(data, columnNames);
         JTable Grid = new JTable(model)
         {
-            //  Returning the Class of each column will allow different
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			//  Returning the Class of each column will allow different
             //  renderers to be used based on Class
-            public Class getColumnClass(int column)
+            public Class<? extends Object> getColumnClass(int column)
             {
                 return getValueAt(0, column).getClass();
             }
@@ -88,6 +84,7 @@ public class GUI {
 		frame.setBounds(100, 100, 1280, 720);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		frame.setResizable(false);
 		
 		//Game Grid
 		final JTable Grid = createGrid();
