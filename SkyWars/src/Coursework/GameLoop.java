@@ -17,6 +17,10 @@ import javax.swing.table.DefaultTableModel;
 //Main class that will do all the work
 public class GameLoop implements Observable, java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static GameLoop uniqueInstance; 
 	private ArrayList<GridUpdater> updater = new ArrayList<GridUpdater>(); //Observer item
 	private MasterShip ship;

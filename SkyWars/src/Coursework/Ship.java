@@ -7,6 +7,10 @@ import javax.swing.ImageIcon;
 //Abstract class for all the ships used
 public abstract class Ship implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	protected String name;
 	protected Point position;
 	protected Point prev_position;

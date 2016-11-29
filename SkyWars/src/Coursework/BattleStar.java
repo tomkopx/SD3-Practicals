@@ -7,6 +7,11 @@ import javax.swing.ImageIcon;
 //One of the enemy ship classes
 public class BattleStar extends Ship implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public BattleStar(){
 		setName("BattleStar");
 		setImage(new ImageIcon("src\\Coursework\\BattleStar.png"));

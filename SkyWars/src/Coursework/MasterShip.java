@@ -7,6 +7,10 @@ import javax.swing.ImageIcon;
 //Player ship class
 public class MasterShip extends Ship implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	protected ShipMode mode;
 	
 	public MasterShip(Point position){

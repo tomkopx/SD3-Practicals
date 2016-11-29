@@ -17,6 +17,10 @@ import javax.swing.JTable;
 
 public class GUI implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JFrame frame;
 	protected GameLoop gameLoop = GameLoop.getInstance();
 	protected MoveController controller = new MoveController();//Creating unique game loop instance
@@ -42,6 +46,7 @@ public class GUI implements java.io.Serializable {
 	 * Create the application.
 	 */
 	public GUI() {
+		
 		initialize();
 	}
 	
@@ -216,6 +221,13 @@ public class GUI implements java.io.Serializable {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				gameLoop.Save(Grid);
+				
+				//Add a delay after serialisation to allow it to save smoothly
+				try {
+					Thread.sleep(500);
+				} catch(InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		Save.setBounds(957, 594, 122, 35);

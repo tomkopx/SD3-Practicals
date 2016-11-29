@@ -4,6 +4,11 @@ package Coursework;
 public class DefensiveMode implements ShipMode, java.io.Serializable {
 
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public void shipMode() {
 
 		System.out.println("I am defending!");
